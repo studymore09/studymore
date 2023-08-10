@@ -1,43 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Data Pendaftaran</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tampilan Data Pendaftaran</title>
     <style>
+        /* Gaya CSS Anda */
         table {
             border-collapse: collapse;
             width: 100%;
         }
+
         th, td {
-            border: 1px solid black;
-            padding: 8px;
+            border: 1px solid #dddddd;
             text-align: left;
+            padding: 8px;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .delete-button {
-            background-color: #ff0000;
-            color: #fff;
+            background-color: #ff5050;
+            color: white;
             border: none;
-            cursor: pointer;
             padding: 5px 10px;
-            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #ff0000;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <h1>Data Pendaftaran</h1>
-    <table id="dataTable">
-        <tr>
-            <th>Nama</th>
-            <th>Email</th>
-            <th>No HP</th>
-            <th>Kelas</th>
-            <th>Alamat</th>
-            <th>Minat</th>
-        </tr>
-    </table>
-    <script src="admin.js"></script>
+    <div class="container">
+        <h1>Data Pendaftaran Sekolah</h1>
+        <label for="adminCode">Masukkan Kode Admin:</label>
+        <input type="password" id="adminCode" required>
+        <button onclick="authenticate()">Masuk</button>
+        <table>
+            <tr>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Kelas</th>
+                <th>Aksi</th>
+            </tr>
+            <tbody id="registrationData">
+                <!-- Data pendaftaran akan ditampilkan di sini -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let registrations = [];
+
+        function authenticate() {
+            const adminCodeInput = document.getElementById("adminCode");
+            const adminCode = adminCodeInput.value;
+
+            // Ganti 'yourAdminCode' dengan kode admin yang valid
+            if (adminCode === 'yourAdminCode') {
+                // Jika autentikasi berhasil, tampilkan data
+                displayData();
+            } else {
+                alert("Kode admin salah. Harap coba lagi.");
+                adminCodeInput.value = "";
+            }
+        }
+
+        function displayData() {
+            const registrationData = document.getElementById("registrationData");
+
+            // Ambil dan tampilkan data dari penyimpanan lokal
+            registrations = JSON.parse(localStorage.getItem("registrations")) || [];
+
+            if (registrations.length > 0) {
+                registrationData.innerHTML = registrations.map((registration, index) => `
+                    <tr>
+                        <td>${registration.nama}</td>
+                        <td>${registration.email}</td>
+                        <td>${registration.kelas}</td>
+                        <td><button class="delete-button" onclick="deleteRegistration(${index})">Hapus</button></td>
+                    </tr>
+                `).join("");
+            } else {
+                registrationData.innerHTML = "<tr><td colspan='4'>Tidak ada data pendaftaran yang tersedia.</td></tr>";
+            }
+        }
+
+        function deleteRegistration(index) {
+            registrations.splice(index, 1);
+            localStorage.setItem("registrations", JSON.stringify(registrations));
+            displayData(); // Tampilkan ulang data setelah penghapusan
+        }
+    </script>
 </body>
 </html>
